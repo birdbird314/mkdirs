@@ -3,7 +3,7 @@
 
 (defn- root? [dir] (= "/" dir))
 
-(defn- dir-exists? 
+(defn- dir-exists-in? 
   [existing to-add]
   (or
     (root? to-add)
@@ -19,10 +19,17 @@
 	  "/"
 	  result)))
 
-(defn mkdirs 
+(defn mkdirs-single 
   [existing to-add]
   (loop [result 0
-         dir (first to-add)]
-    (if (dir-exists? existing dir)
-      result 
-      (recur (inc result) (parent dir)))))
+         dir to-add]
+      (if (dir-exists-in? existing dir)
+        result 
+        (recur (inc result) (parent dir)))))
+
+(defn mkdirs 
+  [existing dirs-to-add] 
+  (reduce 
+    #(+ %1 (mkdirs-single existing %2))
+	0
+	dirs-to-add))
